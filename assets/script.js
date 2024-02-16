@@ -20,110 +20,116 @@ var checkNumber;
 var checkSpecial;
 var approvedPasswordLength;
 
-function generatePassword() {
-  var criteria = passwordPrompts(); // Get the criteria for password generation
-  var password = "";
-  var characters = "";
-  var userChoice = [];
-  
 
 
-  if (criteria.includeUppercase) {
-      characters += uppercase;
-  }
-  if (criteria.includeLowercase) {
-      characters += lowercase;
-  }
-  if (criteria.includeNumbers) {
-      characters += numbers;
-  }
-  if (criteria.includeSpecialCharacters) {
-      characters += special;
+function generatePassword(criteria) {
+  const characters = getCharacterOptions(criteria);
+
+  if (!characters) {
+      // Handle the case where no character types are selected
+      console.error("Error: Please select at least one character type for the password.");
+      return null; // Return null if no character types are selected
   }
 
-  // Generate password based on length and selected character sets
-  for (var i = 0; i < approvedPasswordLength; i++) {
-      var randomIndex = Math.floor(Math.random() * approvedPasswordLength);
+  const generatedPassword = generateRandomPassword(characters, criteria.length);
+
+  if (!generatedPassword) {
+      // Handle the case where password generation fails
+      console.error("Error: Failed to generate password.");
+      return null; // Return null if password generation fails
+  }
+
+  return {
+      generatedPassword: generatedPassword,
+      criteria: criteria
+  };
+}
+
+function generateRandomPassword(characters, length) {
+  if (!characters || characters.length === 0 || length <= 0) {
+      return null; // Return null if characters or length are invalid
+  }
+
+  let password = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
       password += characters[randomIndex];
   }
 
-  // Display the generated password
-  console.log("Generated Password: " + password);
+  if (password.length !== length) {
+      return null; // Return null if password length is incorrect
+  }
+
   return password;
 }
-// Write password to the #password input
+
 function writePassword() {
-    // Generate the password and assign it to the passwordText element
-    var password = generatePassword();
-    var passwordText = document.querySelector("#password");
-    passwordText.value = password;
+  // Display a loading indicator while generating the password
+  var passwordText = document.querySelector("#password");
+  passwordText.value = "Generating password...";
+
+  // Get the criteria for password generation
+  var criteria = passwordPrompts();
+
+  // Generate the password based on the criteria
+  var passwordData = generatePassword(criteria);
+
+  // Update the password input field with the generated password
+  if (passwordData) {
+      passwordText.value = passwordData.generatedPassword;
+  } else {
+      passwordText.value = "Error: Please select at least one character type.";
+  }
 }
+
+// Add event listener to generate button
+generateBtn.addEventListener("click", writePassword);
+
 // The prompts the password must satisfy
 function passwordPrompts() {
   var passwordLength = prompt("How long would you like your password to be? Please enter a number between 8 and 128.");
-  checkLength(passwordLength);
-  
-  var askLowercase = confirm("Do you want to include lowercase letters in your password?");
-  var askUppercase = confirm("Do you want to include uppercase letters in your password?");
-  var askNumbers = confirm("Do you want to include numbers in your password?");
-  var askSpecial = confirm("Do you want to include special characters in your password?");
-  
-  var userChoice = [askLowercase, askUppercase, askNumbers, askSpecial];
-  approvedChoices(userChoice);
+  var includeLowercase = confirm("Do you want to include lowercase letters in your password?");
+  var includeUppercase = confirm("Do you want to include uppercase letters in your password?");
+  var includeNumbers = confirm("Do you want to include numbers in your password?");
+  var includeSpecialCharacters = confirm("Do you want to include special characters in your password?");
+
+  var criteria = {
+      length: parseInt(passwordLength),
+      includeLowercase: includeLowercase,
+      includeUppercase: includeUppercase,
+      includeNumbers: includeNumbers,
+      includeSpecialCharacters: includeSpecialCharacters
+  };
+
+  return criteria;
 }
-// Verfies the length of the password meets the criteria
+
+
 function checkLength(passwordLength) {
   // Checking for correct length criteria
   if (passwordLength > 128 || passwordLength < 8) {
       alert("Invalid Length, Try Again.\n\nPlease choose a password length between 8 to 128 characters.");
       return false; // Return false if the length is invalid
-  } else{
+  } else {
       // Continue where passwordPrompts function left off
       return true; // Return true if the length is valid
   }
 }
-function approvedChoices(userChoice){
-  // Checks if user did not pick any criterias for password
-   if(!userChoice.some(Boolean)){
-    // user will be prompted to start over
-    alert("Try Again. You must choose at least one criteria for password.");
-    passwordPrompts();
-   }
-   else{
-      //checking if user wants to include lowercase letters
-      if(userChoice[0] === true){
-        askLowercase = true;
-        console.log(askLowercase);
-      }
-      else{
-        askLowercase = false;
-        console.log(askLowercase);
-      }
-      if(userChoice[1] === true){
-        askUppercase = true;
-        console.log(askUppercase);
-      }
-      else{
-        askUppercase = false;
-        console.log(askUppercase);
-      }
-      if(userChoice[2] === true){
-        askNumbers = true;
-        console.log(askNumbers);
-      }
-      else{
-        askNumbers = false;
-        console.log(askNumbers);
-      }
-      if(userChoice[3] === true){
-        askSpecial = true;
-        console.log(askSpecial);
-      }
-      else{
-        askSpecial = false;
-        console.log(askSpecial);
-      }
-    }
+function approvedChoices(userChoice) {
+  var criteria = {
+      includeLowercase: userChoice[0],
+      includeUppercase: userChoice[1],
+      includeNumbers: userChoice[2],
+      includeSpecialCharacters: userChoice[3]
+  };
+
+  if (!Object.values(criteria).includes(true)) {
+      alert("Try Again. You must choose at least one criteria for the password.");
+      passwordPrompts();
+  } else {
+      criteria.includeLowercase ? console.log("Include Lowercase: Yes") : console.log("Include Lowercase: No");
+      criteria.includeUppercase ? console.log("Include Uppercase: Yes") : console.log("Include Uppercase: No");
+      criteria.includeNumbers ? console.log("Include Numbers: Yes") : console.log("Include Numbers: No");
+      criteria.includeSpecialCharacters ? console.log("Include Special Characters: Yes") : console.log("Include Special Characters: No");
+  }
 }
-// Add event listener to generate button
-generateBtn.addEventListener("click", writePassword);
