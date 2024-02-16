@@ -9,7 +9,6 @@
 
 // Get references to the #generate element
 var generateBtn = document.querySelector("#generate");
-
 // Password Variables
 var lowercase = "abcdefghijklmnopqrstuvwxyz"
 var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -19,57 +18,70 @@ var checkLowercase;
 var checkUppercase;
 var checkNumber;
 var checkSpecial;
+var approvedPasswordLength;
 
 function generatePassword() {
-  console.log ("Click the button to create a password");
+  var criteria = passwordPrompts(); // Get the criteria for password generation
+  var password = "";
+  var characters = "";
+  var userChoice = [];
+  
 
+
+  if (criteria.includeUppercase) {
+      characters += uppercase;
+  }
+  if (criteria.includeLowercase) {
+      characters += lowercase;
+  }
+  if (criteria.includeNumbers) {
+      characters += numbers;
+  }
+  if (criteria.includeSpecialCharacters) {
+      characters += special;
+  }
+
+  // Generate password based on length and selected character sets
+  for (var i = 0; i < approvedPasswordLength; i++) {
+      var randomIndex = Math.floor(Math.random() * approvedPasswordLength);
+      password += characters[randomIndex];
+  }
+
+  // Display the generated password
+  console.log("Generated Password: " + password);
+  return password;
 }
-
-// Add event listener to generate button
-generateBtn.addEventListener("click", function(event) {
-    event.preventDefault();
-    writePassword();
-});
-
 // Write password to the #password input
 function writePassword() {
     // Generate the password and assign it to the passwordText element
     var password = generatePassword();
     var passwordText = document.querySelector("#password");
     passwordText.value = password;
-
-    // Prompt the user for password criteria
-    var criteriapw = passwordPrompts();
 }
-
 // The prompts the password must satisfy
 function passwordPrompts() {
-  var passwordLength = prompt("How long would you like your password to be? between 8-128 characters")
+  var passwordLength = prompt("How long would you like your password to be? Please enter a number between 8 and 128.");
   checkLength(passwordLength);
-  var askLowercase = confirm("Does your password have lowercase letters?");
-  var askUppercase = confirm("Does your password have uppercase letters?");
-  var askNumbers = confirm("Does your password have numbers?");
-  var askSpecial = confirm ("Does your password have special characters?");
-  var userChoice = [askSpecial, askNumbers, askUppercase,askLowercase];
-
-// // call the Users choices in order to process and store them
+  
+  var askLowercase = confirm("Do you want to include lowercase letters in your password?");
+  var askUppercase = confirm("Do you want to include uppercase letters in your password?");
+  var askNumbers = confirm("Do you want to include numbers in your password?");
+  var askSpecial = confirm("Do you want to include special characters in your password?");
+  
+  var userChoice = [askLowercase, askUppercase, askNumbers, askSpecial];
   approvedChoices(userChoice);
 }
-
 // Verfies the length of the password meets the criteria
-function checkLength(passwordLength){
-  //Checking for correct length criteria
-  if (passwordLength > 128|| passwordLength < 8){
-    alert("Invalid Length, Try Again.\n\nPlease choose a password length between 8 to 128 characters. ");
-    //Starts over passwordPrompts function
-    passwordPrompts();
+function checkLength(passwordLength) {
+  // Checking for correct length criteria
+  if (passwordLength > 128 || passwordLength < 8) {
+      alert("Invalid Length, Try Again.\n\nPlease choose a password length between 8 to 128 characters.");
+      return false; // Return false if the length is invalid
+  } else{
+      // Continue where passwordPrompts function left off
+      return true; // Return true if the length is valid
   }
-  else{
-    //continues where passwordPrompts function left off 
-    return Promise.resolve();
- }
 }
-
 function approvedChoices(userChoice){
   // Checks if user did not pick any criterias for password
    if(!userChoice.some(Boolean)){
