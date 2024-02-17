@@ -1,8 +1,7 @@
 # Password-Generator
 
 ## Table of Contents
-    Table of Contents:
-        A. Description
+### Description
         B. Criteria
         C. Technologies
         D. Screenshots
@@ -20,3 +19,12 @@ C. Technologies:
 D. Images:
 
 E. Deployed Link
+
+
+
+
+
+
+
+
+
