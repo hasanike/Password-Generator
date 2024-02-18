@@ -1,10 +1,10 @@
 // Order of operations
-// click a button to create a password.
-// password criteria given
-// 8 < 128 characters
-// include lowercase, uppercase, numeric, and/or special characters
-// create password
-// generate password
+  // click a button to create a password.
+  // password criteria given
+    // 8 < 128 characters
+    // include lowercase, uppercase, numeric, and/or special characters
+  // create password
+  // generate password
 
 
 // Get references to the #generate element
@@ -15,13 +15,14 @@ var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 var numbers = "0123456789"
 var special = "!@#$%^&*()_-=+[]{};:',<.>/?"
 
-
+// Generates the password. 
 function generatePassword() {
   var userChosen = "";
   var passwordLength = prompt("How long would you like your password to be? Please enter a number between 8 and 128.");
+  // Enforces the lenght requirement or forces pick another number
   if (passwordLength > 128 || passwordLength < 8) {
     alert("Invalid Length, Try Again.\n\nPlease choose a password length between 8 to 128 characters.");
-    return null; // Return false if the length is invalid
+    return null; 
   }
 
   var includeLowercase = confirm("Do you want to include lowercase letters in your password?");
@@ -36,7 +37,7 @@ function generatePassword() {
     alert("Error: Please select at least one character type for the password.");
     return null; // Return null if no character types are selected
   }
-  // if "yes" to at least one prompt, makes a custom passwork to user's want
+  // if "yes" to at least one prompt, makes a custom passwork to user's desire
   if (includeLowercase) {
     userChosen = userChosen += lowercase
   }
